@@ -195,6 +195,9 @@ BUILD_CC = clang
 # Use llvm instead of gcc. Recent Android kernels (past android 12) need llvm.
 BUILD_LLVM = 0
 
+# Set to 1 to skip modules packaging if CONFIG_MODULES is disabled in defconfig 
+BUILD_SKIP_MODULES = 0
+
 # Extra paths to prepend to the PATH variable. You'll probably want
 # to specify the clang path here (the default).
 BUILD_PATH = /usr/lib/llvm-android-6.0-4691093/bin

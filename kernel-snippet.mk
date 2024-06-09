@@ -112,7 +112,7 @@ out/kernel-stamp.%: out/KERNEL_OBJ/.config
 	touch $(OUT)/kernel-stamp.$*
 
 out/kernel-stamp.default: out/KERNEL_OBJ/.config
-	$(BUILD_COMMAND) $(KERNEL_DEFAULT_TARGET)
+	$(BUILD_COMMAND) $(KERNEL_BUILD_TARGET)
 	touch $(OUT)/kernel-stamp.default
 
 ifneq ($(BUILD_SKIP_MODULES),1)

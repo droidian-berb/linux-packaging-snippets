@@ -88,7 +88,7 @@ path-override-prepare:
 	ln -sf /opt/android/prebuilts/python/2.7.5/bin/python2.7 debian/path-override/python2.7
 
 ifeq ($(KERNEL_CONFIG_USE_FRAGMENTS),1)
-out/KERNEL_OBJ/.config: path-override-prepare $(KERNEL_SOURCES)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG)
+out/KERNEL_OBJ/.config: path-override-prepare $(KERNEL_SOURCES)/arch/$(KERNEL_ARCH)/configs/$(KERNEL_DEFCONFIG) $(KERNEL_SOURCES)/droidian/$(DEVICE_MODEL).config
 	mkdir -p $(KERNEL_OUT)
 ifeq ($(KERNEL_CONFIG_USE_DIFFCONFIG),1)
 	$(BUILD_COMMAND) ARCH=$(KERNEL_ARCH) O=$(KERNEL_OUT) KBUILD_DIFFCONFIG=$(KERNEL_PRODUCT_DIFFCONFIG) $(KERNEL_DEFCONFIG)

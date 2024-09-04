@@ -201,6 +201,9 @@ BUILD_LLVM = 0
 # Set to 1 to skip modules packaging if CONFIG_MODULES is disabled in defconfig 
 BUILD_SKIP_MODULES = 0
 
+# Enable verbose mode
+ENABLE_VERBOSE = 0
+
 # Set clang version
 CLANG_VERSION = 6.0-4691093
 # Set to 1 to use a manually installed toolchain

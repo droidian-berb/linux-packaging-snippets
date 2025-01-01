@@ -212,6 +212,11 @@ BUILD_SKIP_MODULES = 0
 #   * From trixie:       15, 17, 18, 19
 #   * From bullseye:     9, 11, 13, 16
 CLANG_VERSION = 6
+# Clang source can be debian or droidian
+# If not defined:
+# - amd64 hosts: droidian will be the default
+# - arm64 hosts: debian will be the default
+# CLANG_FROM_DISTRO = droidian
 
 # Custom clang:
 # Set to 1 to use a manually installed clang prebuilt,
@@ -220,9 +225,10 @@ CLANG_VERSION = 6
 # CLANG_VERSION will not be used
 CLANG_CUSTOM = 0
 
+# Optional:
 # Extra paths to prepend to the PATH variable. You'll probably want
 # to specify a custom toolchain path here.
-BUILD_PATH = /usr/lib/llvm-android-$(CLANG_VERSION)/bin
+# BUILD_PATH = /path/to/custom/toolchain/bin
 
 # Extra packages to add to the Build-Depends section. Mainline builds
 # can have this section empty, unless cross-building.
@@ -230,7 +236,8 @@ BUILD_PATH = /usr/lib/llvm-android-$(CLANG_VERSION)/bin
 DEB_TOOLCHAIN = linux-initramfs-halium-generic:arm64, binutils-aarch64-linux-gnu, gcc-4.9-aarch64-linux-android, g++-4.9-aarch64-linux-android, libgcc-4.9-dev-aarch64-linux-android-cross
 
 # Where we're building on
-DEB_BUILD_ON = amd64
+# TODO Can be removed since host autodetection is now implemented?
+# DEB_BUILD_ON = amd64
 
 # Where we're going to run this kernel on
 DEB_BUILD_FOR = arm64

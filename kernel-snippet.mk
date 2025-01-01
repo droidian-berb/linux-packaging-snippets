@@ -70,9 +70,23 @@ ifdef KERNEL_CONFIG_EXTRA_FRAGMENTS
 KERNEL_CONFIG_DEVICE_FRAGMENTS += $(patsubst %, $(KERNEL_SOURCES)/droidian/%, $(KERNEL_CONFIG_EXTRA_FRAGMENTS))
 endif
 
+# Clang version check
+ifeq ($(BUILD_CC), clang)
+# Not continue when using CLANG_CUSTOM
 ifneq ($(CLANG_CUSTOM), 1)
-DEB_TOOLCHAIN := clang-android-$(CLANG_VERSION), $(DEB_TOOLCHAIN)
+# CLANG_VERSION is required
+ifdef CLANG_VERSION
+include /usr/share/linux-packaging-snippets/kernel-snippet-clang-versions.mk
+
+# When CLANG_CUSTOM is enabled, BUILD_PATH should be defined
+ifeq ($(CLANG_CUSTOM), 1)
+ifndef BUILD_PATH
+$(error BUILD_PATH should be defined in kernel-info-mk when using a custom toolchain.)
 endif
+endif
+endif # CLANG_VERSION
+endif # CLANG_CUSTOM
+endif # BUILD_CC
 
 debian/control:
 	sed -e "s|@KERNEL_BASE_VERSION@|$(KERNEL_BASE_VERSION)|g" \

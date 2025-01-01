@@ -10,6 +10,9 @@ VARIANT = android
 # Kernel base version
 KERNEL_BASE_VERSION = 4.4-0
 
+# Last important developer's name on which the kernel source is based
+# KERNEL_DEVELOPER = developer-name
+
 # The kernel cmdline to use
 KERNEL_BOOTIMAGE_CMDLINE = put-cmdline-here
 

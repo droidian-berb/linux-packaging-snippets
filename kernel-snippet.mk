@@ -74,6 +74,10 @@ ifneq ($(CLANG_CUSTOM), 1)
 DEB_TOOLCHAIN := clang-android-$(CLANG_VERSION), $(DEB_TOOLCHAIN)
 endif
 
+# control override for enabling kernel developer's name in kernel name
+ifdef KERNEL_DEVELOPER_NAME
+include /usr/share/linux-packaging-snippets/kernel-snippet-control-override-developer-name.mk
+endif
 debian/control:
 	sed -e "s|@KERNEL_BASE_VERSION@|$(KERNEL_BASE_VERSION)|g" \
 		-e "s|@VARIANT@|$(VARIANT)|g" \

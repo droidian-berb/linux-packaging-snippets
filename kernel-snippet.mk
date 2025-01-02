@@ -25,6 +25,15 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+# Host arch detection
+# TODO For amd64, keep DEB_BUILD_ON in kernel-info?
+HOST_ARCH = $(shell uname -m)
+ifeq ($(HOST_ARCH), aarch64)
+	DEB_BUILD_ON = arm64
+else ifeq ($(HOST_ARCH), x86_64)
+	DEB_BUILD_ON = amd64
+endif
+
 include $(CURDIR)/debian/kernel-info.mk
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
@@ -70,8 +79,59 @@ ifdef KERNEL_CONFIG_EXTRA_FRAGMENTS
 KERNEL_CONFIG_DEVICE_FRAGMENTS += $(patsubst %, $(KERNEL_SOURCES)/droidian/%, $(KERNEL_CONFIG_EXTRA_FRAGMENTS))
 endif
 
+# Clang toolchain configuration
+ifeq ($(BUILD_CC), clang)
+include /usr/share/linux-packaging-snippets/kernel-snippet-clang-clean-deb-toolchain.mk
+# Not continue when using CLANG_CUSTOM
 ifneq ($(CLANG_CUSTOM), 1)
-DEB_TOOLCHAIN := clang-android-$(CLANG_VERSION), $(DEB_TOOLCHAIN)
+# Limit for now to LLVM builds. For older, a deeper analysis is required.
+ifeq ($(USE_LLVM), 1)
+# CLANG_VERSION is required
+ifdef CLANG_VERSION
+include /usr/share/linux-packaging-snippets/kernel-snippet-clang-versions.mk
+# Force clang from debian for the specified archs
+ifeq ($(DEB_BUILD_ON),arm64)
+	CLANG_FROM_DISTRO := debian
+# Next else can be used to set a default distro for amd64 hosts.
+# Currently amd64 not is not using any distro config
+# to not alter the current compatibility
+#else ifeq ($(DEB_BUILD_ON),amd64)
+#	ifndef CLANG_FROM_DISTRO
+#		CLANG_FROM_DISTRO := droidian
+#	endif
+endif
+ifeq ($(CLANG_FROM_DISTRO), debian)
+ifneq ($(findstring $(CLANG_VERSION_INT), $(CLANG_VERSIONS_DEBIAN)), $(CLANG_VERSION_INT))
+	$(error Specified clang version not supported. Supported versions: $(CLANG_VERSIONS_DEBIAN))
+endif
+	DEB_TOOLCHAIN := \
+		clang-$(CLANG_VERSION_INT), \
+		lld-$(CLANG_VERSION_INT), \
+		llvm-$(CLANG_VERSION_INT)-dev, \
+		$(DEB_TOOLCHAIN_CLEANED)
+	BUILD_PATH := /usr/lib/llvm-$(CLANG_VERSION_INT)/bin:$(BUILD_PATH)
+# Next if can be enabled for droidian clang specific configs
+#else ifeq ($(CLANG_FROM_DISTRO), droidian)
+else
+	DEB_TOOLCHAIN := \
+		clang-android-$(CLANG_VERSION_STR), \
+		$(DEB_TOOLCHAIN_CLEANED)
+	BUILD_PATH := /usr/lib/llvm-$(CLANG_VERSION_STR)/bin:$(BUILD_PATH)
+endif # clang DISTRO
+endif # CLANG_VERSION
+endif # USE_LLVM
+endif # CLANG_CUSTOM
+endif # BUILD_CC
+
+# When CLANG_CUSTOM is enabled, BUILD_PATH should be defined
+ifeq ($(BUILD_CC), clang)
+ifeq ($(CLANG_CUSTOM), 1)
+ifndef BUILD_PATH
+$(error BUILD_PATH should be defined in kernel-info-mk when using a custom toolchain.)
+endif
+	DEB_TOOLCHAIN := \
+		$(DEB_TOOLCHAIN_CLEANED)
+endif
 endif
 
 debian/control:

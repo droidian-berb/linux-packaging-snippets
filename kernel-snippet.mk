@@ -85,7 +85,7 @@ include /usr/share/linux-packaging-snippets/kernel-snippet-clang-clean-deb-toolc
 # Not continue when using CLANG_CUSTOM
 ifneq ($(CLANG_CUSTOM), 1)
 # Limit for now to LLVM builds. For older, a deeper analysis is required.
-ifeq ($(USE_LLVM), 1)
+ifeq ($(BUILD_LLVM), 1)
 # CLANG_VERSION is required
 ifdef CLANG_VERSION
 include /usr/share/linux-packaging-snippets/kernel-snippet-clang-versions.mk
@@ -119,7 +119,7 @@ else
 	BUILD_PATH := /usr/lib/llvm-$(CLANG_VERSION_STR)/bin:$(BUILD_PATH)
 endif # clang DISTRO
 endif # CLANG_VERSION
-endif # USE_LLVM
+endif # BUILD_LLVM
 endif # CLANG_CUSTOM
 endif # BUILD_CC
 

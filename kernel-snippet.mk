@@ -116,7 +116,7 @@ else
 	DEB_TOOLCHAIN := \
 		clang-android-$(CLANG_VERSION_STR), \
 		$(DEB_TOOLCHAIN_CLEANED)
-	BUILD_PATH := /usr/lib/llvm-$(CLANG_VERSION_STR)/bin:$(BUILD_PATH)
+	BUILD_PATH := /usr/lib/llvm-android-$(CLANG_VERSION_STR)/bin:$(BUILD_PATH)
 endif # clang DISTRO
 endif # CLANG_VERSION
 endif # BUILD_LLVM

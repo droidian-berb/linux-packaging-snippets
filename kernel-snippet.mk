@@ -123,16 +123,19 @@ endif # BUILD_LLVM
 endif # CLANG_CUSTOM
 endif # BUILD_CC
 
-# When CLANG_CUSTOM is enabled, BUILD_PATH should be defined
+# When CLANG_CUSTOM is enabled and manually downloaded, BUILD_PATH should be defined
+# If using auto-download, BUILD_PATH will be overriden
 ifeq ($(BUILD_CC), clang)
 ifeq ($(CLANG_CUSTOM), 1)
-ifndef BUILD_PATH
-$(error BUILD_PATH should be defined in kernel-info-mk when using a custom toolchain.)
-endif
-	DEB_TOOLCHAIN := \
-		$(DEB_TOOLCHAIN_CLEANED)
-endif
-endif
+ifdef CLANG_CUSTOM_URL
+ifndef CLANG_CUSTOM_PATH
+$(error CLANG_CUSTOM_PATH should be exported from the caller script, ex. releng.)
+endif # CLANG_CUSTOM_PATH
+endif # CLANG_CUSTOM_URL
+BUILD_PATH := $(CLANG_CUSTOM_PATH)
+DEB_TOOLCHAIN := $(DEB_TOOLCHAIN_CLEANED)
+endif # CLANG_CUSTOM
+endif # BUILD_CC
 
 debian/control:
 	sed -e "s|@KERNEL_BASE_VERSION@|$(KERNEL_BASE_VERSION)|g" \
